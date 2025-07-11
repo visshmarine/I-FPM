@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Maritime Theme Colors */
+  --maritime-blue: hsl(207, 90%, 54%);
+  --deep-ocean: hsl(213, 100%, 34%);
+  --teal: hsl(174, 100%, 29%);
+  --dark-teal: hsl(178, 100%, 15%);
+  --warning-orange: hsl(25, 100%, 50%);
+  --success-green: hsl(142, 71%, 45%);
+  --alert-red: hsl(0, 84%, 60%);
+  --caution-yellow: hsl(43, 100%, 50%);
+  --dark-gray: hsl(200, 18%, 16%);
+  --light-gray: hsl(210, 17%, 93%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-maritime-blue {
+    background-color: var(--maritime-blue);
+  }
+  
+  .bg-deep-ocean {
+    background-color: var(--deep-ocean);
+  }
+  
+  .bg-teal {
+    background-color: var(--teal);
+  }
+  
+  .bg-dark-teal {
+    background-color: var(--dark-teal);
+  }
+  
+  .bg-warning-orange {
+    background-color: var(--warning-orange);
+  }
+  
+  .bg-success-green {
+    background-color: var(--success-green);
+  }
+  
+  .bg-alert-red {
+    background-color: var(--alert-red);
+  }
+  
+  .bg-caution-yellow {
+    background-color: var(--caution-yellow);
+  }
+  
+  .bg-dark-gray {
+    background-color: var(--dark-gray);
+  }
+  
+  .bg-light-gray {
+    background-color: var(--light-gray);
+  }
+  
+  .text-maritime-blue {
+    color: var(--maritime-blue);
+  }
+  
+  .text-deep-ocean {
+    color: var(--deep-ocean);
+  }
+  
+  .text-teal {
+    color: var(--teal);
+  }
+  
+  .text-dark-teal {
+    color: var(--dark-teal);
+  }
+  
+  .text-warning-orange {
+    color: var(--warning-orange);
+  }
+  
+  .text-success-green {
+    color: var(--success-green);
+  }
+  
+  .text-alert-red {
+    color: var(--alert-red);
+  }
+  
+  .text-caution-yellow {
+    color: var(--caution-yellow);
+  }
+  
+  .text-dark-gray {
+    color: var(--dark-gray);
+  }
+  
+  .text-light-gray {
+    color: var(--light-gray);
+  }
+  
+  .hover\:bg-deep-ocean:hover {
+    background-color: var(--deep-ocean);
+  }
+  
+  .hover\:bg-dark-teal:hover {
+    background-color: var(--dark-teal);
+  }
+  
+  .hover\:text-deep-ocean:hover {
+    color: var(--deep-ocean);
+  }
+}
