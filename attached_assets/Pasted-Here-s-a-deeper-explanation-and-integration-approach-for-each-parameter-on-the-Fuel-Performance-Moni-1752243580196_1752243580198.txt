@@ -1,0 +1,512 @@
+Here’s a deeper explanation and integration approach for each parameter on the Fuel Performance Monitoring Dashboard:
+
+1. Specific Fuel Oil Consumption (SFOC)
+	•	Details: Measures the efficiency of fuel usage by the engine relative to power output.
+	•	Integration:
+	•	Display as a KPI card (e.g., “SFOC: 180 g/kWh”).
+	•	Include a trend line showing changes over time or voyages.
+	•	Set benchmarks or thresholds to highlight inefficiencies.
+
+2. Fuel Consumption Rate
+	•	Details: Real-time or average fuel burned per hour or nautical mile.
+	•	Integration:
+	•	Real-time gauge showing current rate.
+	•	Line chart for voyage-based consumption trends.
+	•	Compare against expected values under normal conditions.
+
+3. Engine Load Factor
+	•	Details: Indicates how much of the engine’s capacity is being used.
+	•	Integration:
+	•	Add a dial or bar visual to show real-time and average load factors.
+	•	Display load factors for individual engines (main and auxiliary).
+	•	Provide alerts if load exceeds safe operational levels.
+
+4. Carbon Intensity Indicator (CII)
+	•	Details: Tracks CO₂ emitted per ton-mile, critical for IMO compliance.
+	•	Integration:
+	•	Visualize as a score (A to E, per IMO guidelines) with a color-coded indicator.
+	•	Show voyage-specific CII and yearly average.
+	•	Include a target line to track regulatory compliance.
+
+5. Energy Efficiency Operational Index (EEOI)
+	•	Details: Measures energy efficiency based on actual emissions and transport work.
+	•	Integration:
+	•	Display voyage-specific and fleet-wide EEOI as a bar chart or trend line.
+	•	Include tooltips explaining contributing factors (e.g., weather, cargo load).
+
+6. Trim Optimization Index
+	•	Details: Quantifies how optimal trim adjustments could improve fuel efficiency.
+	•	Integration:
+	•	Add as a suggestion card: “Optimize trim for X% fuel savings.”
+	•	Include a bar showing deviation from optimal trim.
+	•	Use machine learning to provide dynamic trim recommendations.
+
+7. Weather-Adjusted Fuel Efficiency
+	•	Details: Accounts for weather factors like wind, waves, and current on fuel use.
+	•	Integration:
+	•	Correlation chart showing fuel consumption vs. weather conditions.
+	•	Alerts for adverse weather impacting performance.
+	•	Integrate real-time weather data with fuel usage trends.
+
+8. Auxiliary Engine Fuel Consumption
+	•	Details: Tracks energy use for non-propulsion systems like lighting, HVAC, and pumps.
+	•	Integration:
+	•	Separate KPI card for auxiliary engine consumption.
+	•	Display usage breakdown by system (e.g., HVAC: 40%, Pumps: 30%).
+	•	Highlight systems with higher-than-average consumption.
+
+9. Fuel Cost per Nautical Mile
+	•	Details: Calculates monetary cost based on fuel usage and current prices.
+	•	Integration:
+	•	KPI showing cost per nm for current voyage and average.
+	•	Include a savings tracker comparing against previous voyages.
+	•	Add a toggle for “View cost by fuel type” (e.g., HFO, MGO).
+
+10. Emission Reduction Index
+	•	Details: Tracks progress in reducing NOx, SOx, and CO₂ emissions.
+	•	Integration:
+	•	Pie chart showing percentage reductions compared to baseline.
+	•	Add milestones for regulatory compliance (e.g., “20% reduction achieved”).
+	•	Include a comparison with fleet-wide averages.
+
+General Dashboard Enhancements
+	•	Interactive Widgets: Allow users to adjust filters (e.g., date range, engine type, voyage).
+	•	Custom Alerts: Notify users of inefficiencies, non-compliance, or abnormal trends.
+	•	Benchmarking: Compare performance against similar vessels or industry standards.
+	•	Export Feature: Enable PDF/Excel exports for reporting and compliance.
+
+Below is a detailed guide for creating all the visualizations and integrating features in Power BI for the Fuel Performance Monitoring Dashboard, including DAX formulas, API integration, and specific setup instructions.
+1. Specific Fuel Oil Consumption (SFOC)
+
+Visual: Line Chart
+1. Steps:
+• Drag Date to the X-axis.
+• Drag SFOC (fuel consumed per kWh) to the Y-axis.
+• Add a slicer for Voyage_ID or Ship_ID.
+2. DAX Formula (Trend Analysis):
+SFOC_Trend = CALCULATE(AVERAGE(FuelData[SFOC]), ALLEXCEPT(FuelData, FuelData[Date]))
+
+3. Power BI Feature:
+• Enable tooltips to display engine performance metrics like load factor.
+2. Fuel Consumption Rate
+
+Visual: Clustered Column Chart
+1. Steps:
+• Drag Voyage_ID or Segment to the X-axis.
+• Drag Fuel Consumption Rate (tons/hour) to the Y-axis.
+2. DAX Formula (Per Nautical Mile):
+FuelPerNauticalMile = SUM(FuelData[Fuel_Consumed]) / SUM(FuelData[Nautical_Miles])
+
+3. Power BI Feature:
+• Add filters for Fuel Type or weather-adjusted consumption.
+3. Engine Load Factor
+
+Visual: Gauge Chart
+1. Steps:
+• Set Load Factor (%) as the value.
+• Define minimum (0%) and maximum (100%) thresholds.
+2. DAX Formula (Average Load Factor):
+AvgLoadFactor = AVERAGE(FuelData[Load_Factor])
+
+3. Power BI Feature:
+• Configure alerts to notify when load factor exceeds thresholds.
+4. Carbon Intensity Indicator (CII)
+
+Visual: KPI or Radar Chart
+1. Steps:
+• Use CII as the value in a KPI visual.
+• Overlay IMO benchmarks for compliance using conditional formatting.
+2. DAX Formula (Deviation from Benchmark):
+CII_Deviation = FuelData[CII] - [IMOBenchmarkCII]
+
+3. Power BI Feature:
+• Conditional formatting to flag non-compliance visually.
+5. Energy Efficiency Operational Index (EEOI)
+
+Visual: Line and Bar Combo Chart
+1. Steps:
+• Use a line chart for EEOI trends.
+• Overlay bar chart for voyage-specific cargo efficiency.
+2. DAX Formula (EEOI Calculation):
+EEOI = SUM(FuelData[CO2_Emissions]) / SUM(FuelData[Cargo_Tons] * FuelData[Distance])
+
+3. Power BI Feature:
+• Add slicers for ship type or voyage type.
+6. Trim Optimization Index
+
+Visual: Bubble Chart
+1. Steps:
+• Plot Trim Index on the X-axis, Fuel Efficiency on the Y-axis, and bubble size as Potential Savings.
+2. DAX Formula (Efficiency Gain):
+EfficiencyGain = FuelData[BaseEfficiency] - FuelData[TrimAdjustedEfficiency]
+
+3. Power BI Feature:
+• Add What-if parameters to simulate trim adjustment scenarios.
+7. Weather-Adjusted Fuel Efficiency
+
+Visual: Stacked Column Chart
+1. Steps:
+• Plot Actual Fuel Consumption and Weather-Adjusted Consumption for comparison.
+2. DAX Formula (Adjusted Consumption):
+WeatherAdjusted = SUM(FuelData[Fuel_Consumed]) - SUM(FuelData[WeatherImpact])
+
+3. API Integration:
+• Use a weather API (e.g., OpenWeatherMap) to pull real-time weather data.
+• Steps:
+• Connect to API via Power Query.
+• Parse JSON data for wind speed, wave height, and weather impact on fuel.
+• Merge weather data with FuelData.
+8. Auxiliary Engine Fuel Consumption
+
+Visual: Stacked Bar Chart
+1. Steps:
+• Group consumption by Day or Auxiliary Engine.
+2. DAX Formula (Daily Consumption):
+DailyAuxConsumption = SUM(FuelData[Auxiliary_Fuel_Consumed])
+
+3. Power BI Feature:
+• Enable drill-through to engine-specific details.
+9. Fuel Cost per Nautical Mile
+
+Visual: Waterfall Chart
+1. Steps:
+• Show cost breakdown by fuel type or voyage segment.
+2. DAX Formula (Cost/Nautical Mile):
+CostPerNauticalMile = SUM(FuelData[Fuel_Cost]) / SUM(FuelData[Nautical_Miles])
+
+3. Power BI Feature:
+• Use data storytelling to explain cost variations.
+10. Emission Reduction Index
+
+Visual: Stacked Area Chart
+1. Steps:
+• Plot NOx, SOx, and CO₂ reductions over time.
+2. DAX Formula (Emission Reductions):
+EmissionReduction = (BaselineEmissions - CurrentEmissions) / BaselineEmissions * 100
+
+3. Power BI Feature:
+• Add a target line for expected reductions.
+Publishing and Sharing
+1. Publish the Dashboard:
+• Use Power BI Service to publish the report.
+• Enable scheduled refresh for live updates.
+2. Row-Level Security (RLS):
+• Define roles (e.g., engineers, managers).
+• Use DAX to filter data by role:
+[UserRole] = USERPRINCIPALNAME()
+
+3. Mobile View:
+• Optimize visuals for mobile layout using Power BI Mobile View.
+Let me know which part you would like to focus on, or if you’d like help with API integration, specific DAX formulas, or configuration within Power BI!
+
+
+
+
+
+
+
+
+
+
+Integration of Hull Condition Monitoring
+	1.	Incorporate Key Performance Indicators (KPIs):
+	•	Hull Roughness Index (HRI): Quantifies surface roughness and its effect on drag.
+	•	Propeller Efficiency (Slip %): Tracks propulsion efficiency changes due to hull and propeller conditions.
+	2.	Add Relevant Data Points:
+	•	Pre- and post-dry docking data (hull roughness, fuel consumption changes).
+	•	Resistance coefficients (calculated from speed-power curves).
+	•	Weather-adjusted hull performance.
+	3.	Visualization Enhancements:
+	•	Trend Lines: Compare baseline hull performance with current performance to detect fouling or damage.
+	•	Scatter Plots: Show correlations between fuel consumption, speed, and hull resistance.
+	•	Heatmaps: Illustrate the impact of sea conditions on hull efficiency.
+
+Steps to Integrate Hull Monitoring with Fuel Monitoring:
+
+1. Baseline Model Creation
+	•	Use sea trial data to establish a baseline for hull and propeller performance (speed-power curves).
+	•	Apply hybrid modeling to extrapolate performance across different draughts and trims.
+
+2. Real-Time Monitoring
+	•	Incorporate IoT sensors for:
+	•	Hull roughness measurements.
+	•	Speed through water (STW) vs. speed over ground (SOG).
+	•	Use slip % to monitor propeller efficiency trends.
+
+3. Advanced Analytics
+	•	Leverage CFD models or towing tank results for detailed hull performance predictions.
+	•	Include weather data (wind, wave, and current) for resistance correction.
+
+4. Alerts & Anomaly Detection
+	•	Set thresholds for fouling impact (e.g., 5% deviation from baseline resistance).
+	•	Trigger alerts for hull cleaning or propeller polishing recommendations.
+
+5. Reporting Features
+	•	Weekly/monthly comparative reports of hull and fuel performance.
+	•	Highlight ROI for maintenance actions like hull cleaning or propeller upgrades.
+
+Dashboard Features Specific to Hull Condition Monitoring
+	1.	Hull Roughness Impact
+	•	Graph: Fuel consumption increase due to hull roughness over time.
+	•	Insights: Predict optimal cleaning intervals.
+	2.	Slip Analysis
+	•	Chart: Slip (%) vs. fuel consumption per nautical mile.
+	•	Alerts: High slip indicating possible fouling.
+	3.	Speed-Resistance Curve
+	•	Visualization: Current vs. baseline speed-resistance relationship.
+	•	Purpose: Identify deviations due to hull inefficiency.
+	4.	Weather and Hull Impact
+	•	Chart: Correlation between weather conditions and hull resistance.
+	•	Insights: Adjust operation al strategies based on conditions.
+
+Technology Stack Recommendations
+	•	Sensors: IoT-enabled hull roughness and propeller efficiency sensors.
+	•	Data Processing: Python-based back-end for calculations (e.g., SFOC, resistance models).
+	•	Visualization: Power BI/Tableau for dashboards, integrated with AWS/Azure.
+
+Would you like help creating a specific visualization prototype or developing the system further?
+
+To present realistic graphs for integrating hull condition monitoring with fuel performance monitoring, here are some practical examples based on the document:
+
+1. Speed-Resistance Graph
+
+Purpose: Compare current resistance with baseline conditions (from sea trials).
+	•	X-Axis: Speed Through Water (knots).
+	•	Y-Axis: Resistance (kN).
+	•	Lines:
+	•	Baseline resistance (sea trial data).
+	•	Current resistance (post-dry docking or after fouling).
+ 
+
+2. Fuel Consumption vs. Speed
+
+Purpose: Highlight fuel consumption variations due to hull fouling.
+	•	X-Axis: Speed Through Water (knots).
+	•	Y-Axis: Fuel Consumption (MT/day).
+	•	Lines:
+	•	Ideal curve (clean hull).
+	•	Actual performance (fouled hull).
+ 
+3. Hull Roughness Index (HRI) Over Time
+
+Purpose: Track hull surface condition deterioration.
+	•	X-Axis: Time (months).
+	•	Y-Axis: HRI (µm).
+	•	Bars: Cleaning or polishing events to highlight their impact.
+
+ 
+
+4. Slip % vs. Fuel Consumption
+
+Purpose: Monitor propeller efficiency.
+	•	X-Axis: Slip (%).
+	•	Y-Axis: Fuel Consumption (MT/day).
+	•	Trend: Higher slip correlates with inefficiency and possible hull/propeller fouling.
+
+ 
+
+5. Hull Cleaning Impact
+
+Purpose: Show fuel savings post-cleaning.
+	•	X-Axis: Time (months).
+	•	Y-Axis: Fuel Consumption (MT/day).
+	•	Bars: Fuel savings compared to pre-cleaning levels.
+ 
+
+6. Power vs. Speed
+
+Purpose: Visualize power needed at different speeds with varying hull conditions.
+	•	X-Axis: Speed Through Water (knots).
+	•	Y-Axis: Power (kW).
+	•	Lines:
+	•	Clean hull (baseline).
+	•	Fouled hull.
+
+ 
+7. CO₂ Emissions vs. Hull Resistance
+
+Purpose: Evaluate environmental impact.
+	•	X-Axis: Hull Resistance (kN).
+	•	Y-Axis: CO₂ Emissions (tons/day).
+	•	Bars: Increased emissions due to higher resistance.
+ 
+8. Auxiliary Engine Fuel Consumption
+• Details: Tracks energy use for non-propulsion systems like lighting, HVAC, and pumps.
+• Integration:
+• Separate KPI card for auxiliary engine consumption.
+• Display usage breakdown by system (e.g., HVAC: 40%, Pumps: 30%).
+• Highlight systems with higher-than-average consumption.
+
+
+Data Integration
+	•	Sources: Noon reports, IoT sensors, and CFD-based models.
+	•	Parameters Needed:
+	•	Speed, trim, fuel consumption, weather conditions, and hull roughness.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate realistic data for each graph
+
+# 1. Speed-Resistance Graph
+speed = np.linspace(10, 20, 100)  # Speed Through Water (knots)
+baseline_resistance = 0.05 * speed**2  # Baseline resistance (kN)
+current_resistance = baseline_resistance * 1.2  # Increased resistance due to fouling
+
+# 2. Fuel Consumption vs. Speed
+fuel_consumption_baseline = 0.3 * speed**2  # Baseline fuel consumption (MT/day)
+fuel_consumption_fouled = fuel_consumption_baseline * 1.3  # Increased fuel consumption
+
+# 3. Hull Roughness Index (HRI) Over Time
+time_months = np.arange(0, 12, 1)  # 12 months
+hri = 50 + 10 * np.sin(0.5 * time_months) + 5 * np.random.rand(12)  # HRI in µm
+
+# 4. Slip % vs. Fuel Consumption
+slip = np.linspace(0, 15, 50)  # Slip in percentage
+fuel_consumption_slip = 100 + 10 * slip  # Fuel consumption increases with slip
+
+# Plot each graph
+
+# 1. Speed-Resistance Graph
+plt.figure(figsize=(10, 6))
+plt.plot(speed, baseline_resistance, label="Baseline Resistance", linestyle="--")
+plt.plot(speed, current_resistance, label="Current Resistance (Fouled Hull)", linewidth=2)
+plt.title("Speed vs. Resistance")
+plt.xlabel("Speed Through Water (knots)")
+plt.ylabel("Resistance (kN)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 2. Fuel Consumption vs. Speed
+plt.figure(figsize=(10, 6))
+plt.plot(speed, fuel_consumption_baseline, label="Clean Hull", linestyle="--")
+plt.plot(speed, fuel_consumption_fouled, label="Fouled Hull", linewidth=2)
+plt.title("Fuel Consumption vs. Speed")
+plt.xlabel("Speed Through Water (knots)")
+plt.ylabel("Fuel Consumption (MT/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 3. Hull Roughness Index (HRI) Over Time
+plt.figure(figsize=(10, 6))
+plt.bar(time_months, hri, color='skyblue', edgecolor='black')
+plt.title("Hull Roughness Index Over Time")
+plt.xlabel("Time (Months)")
+plt.ylabel("Hull Roughness Index (µm)")
+plt.grid(True, axis='y')
+plt.show()
+
+# 4. Slip % vs. Fuel Consumption
+plt.figure(figsize=(10, 6))
+plt.plot(slip, fuel_consumption_slip, label="Fuel Consumption vs. Slip", linewidth=2)
+plt.title("Slip % vs. Fuel Consumption")
+plt.xlabel("Slip (%)")
+plt.ylabel("Fuel Consumption (MT/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+Here are the additional realistic graphs:
+	5.	Hull Cleaning Impact: Shows the effect of hull cleaning on reducing fuel consumption after maintenance.
+	6.	Power vs. Speed: Illustrates the power required at various speeds for clean and fouled hull conditions.
+	7.	CO₂ Emissions vs. Hull Resistance: Highlights the relationship between resistance and emissions.
+	8.	Weather Impact on Fuel Efficiency: Demonstrates how wind speed increases fuel consumption.
+	9.	Trim Optimization Impact: Displays the effect of trim on fuel efficiency, showing optimal and suboptimal trims.
+	10.	Historical vs. Current Performance: Compares baseline historical performance with the current underperforming state.
+
+Let me know if you’d like refinements or further analysis of these insights! 🚢📊 
+# Generate data for remaining graphs
+
+# 5. Hull Cleaning Impact
+months = np.arange(0, 12, 1)  # 12 months
+fuel_before_cleaning = 50 + 2 * months  # Linear increase in fuel consumption
+fuel_after_cleaning = np.where(months < 6, fuel_before_cleaning, 50)  # Cleaning after 6 months
+
+# 6. Power vs. Speed
+power_baseline = 0.8 * speed**3  # Baseline power (kW)
+power_fouled = power_baseline * 1.2  # Increased power due to fouling
+
+# 7. CO₂ Emissions vs. Hull Resistance
+resistance = np.linspace(50, 150, 50)  # Hull resistance (kN)
+co2_emissions = 2 * resistance  # Linear relationship between resistance and emissions (tons/day)
+
+# 8. Weather Impact on Fuel Efficiency
+wind_speed = np.linspace(0, 20, 50)  # Wind speed (knots)
+fuel_in_wind = 100 + 5 * wind_speed  # Increased fuel consumption with wind speed
+
+# 9. Trim Optimization Impact
+trim = np.linspace(0, 3, 50)  # Trim values in meters
+fuel_trim = 200 - 30 * trim + 5 * trim**2  # Parabolic relationship
+
+# 10. Historical Performance Comparison
+historical_months = np.arange(0, 12, 1)  # 12 months
+historical_performance = 100 - 2 * historical_months  # Baseline degradation
+current_performance = historical_performance * 0.9  # Current underperformance
+
+# Plotting all graphs
+
+# 5. Hull Cleaning Impact
+plt.figure(figsize=(10, 6))
+plt.plot(months, fuel_before_cleaning, label="Before Cleaning", linestyle="--")
+plt.plot(months, fuel_after_cleaning, label="After Cleaning", linewidth=2)
+plt.title("Hull Cleaning Impact on Fuel Consumption")
+plt.xlabel("Time (Months)")
+plt.ylabel("Fuel Consumption (MT/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 6. Power vs. Speed
+plt.figure(figsize=(10, 6))
+plt.plot(speed, power_baseline, label="Clean Hull", linestyle="--")
+plt.plot(speed, power_fouled, label="Fouled Hull", linewidth=2)
+plt.title("Power vs. Speed")
+plt.xlabel("Speed Through Water (knots)")
+plt.ylabel("Power (kW)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 7. CO₂ Emissions vs. Hull Resistance
+plt.figure(figsize=(10, 6))
+plt.plot(resistance, co2_emissions, label="CO₂ Emissions vs. Resistance", linewidth=2)
+plt.title("CO₂ Emissions vs. Hull Resistance")
+plt.xlabel("Hull Resistance (kN)")
+plt.ylabel("CO₂ Emissions (tons/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 8. Weather Impact on Fuel Efficiency
+plt.figure(figsize=(10, 6))
+plt.plot(wind_speed, fuel_in_wind, label="Fuel Consumption vs. Wind Speed", linewidth=2)
+plt.title("Weather Impact on Fuel Efficiency")
+plt.xlabel("Wind Speed (knots)")
+plt.ylabel("Fuel Consumption (MT/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 9. Trim Optimization Impact
+plt.figure(figsize=(10, 6))
+plt.plot(trim, fuel_trim, label="Fuel Consumption vs. Trim", linewidth=2)
+plt.title("Trim Optimization Impact on Fuel Efficiency")
+plt.xlabel("Trim (meters)")
+plt.ylabel("Fuel Consumption (MT/day)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# 10. Historical Performance Comparison
+plt.figure(figsize=(10, 6))
+plt.plot(historical_months, historical_performance, label="Historical Performance", linestyle="--")
+plt.plot(historical_months, current_performance, label="Current Performance", linewidth=2)
+plt.title("Historical vs. Current Performance")
+plt.xlabel("Time (Months)")
+plt.ylabel("Performance Index")
+plt.legend()
+plt.grid(True)
+plt.show()
