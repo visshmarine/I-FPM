@@ -9,8 +9,82 @@ import type {
 } from "@shared/schema";
 
 export async function generateRealisticData(storage: IStorage) {
-  const ships = await storage.getShips();
-  const voyages = await storage.getVoyages();
+  let ships = await storage.getShips();
+  let voyages = await storage.getVoyages();
+
+  // Create initial ships if none exist
+  if (ships.length === 0) {
+    console.log("Creating initial sample ships...");
+    const sampleShips = [
+      {
+        name: "MV Atlantic Explorer",
+        imo: "IMO1234567",
+        type: "Container Ship",
+        deadweight: "80000",
+        enginePower: "20000",
+      },
+      {
+        name: "MV Pacific Voyager",
+        imo: "IMO2345678",
+        type: "Bulk Carrier",
+        deadweight: "120000",
+        enginePower: "15000",
+      },
+      {
+        name: "MV Northern Star",
+        imo: "IMO3456789",
+        type: "Tanker",
+        deadweight: "150000",
+        enginePower: "18000",
+      },
+    ];
+
+    for (const shipData of sampleShips) {
+      await storage.createShip(shipData);
+    }
+    ships = await storage.getShips();
+  }
+
+  // Create initial voyages if none exist
+  if (voyages.length === 0) {
+    console.log("Creating initial sample voyages...");
+    const sampleVoyages = [
+      {
+        shipId: ships[0].id,
+        voyageNumber: "VOY-2024-001",
+        origin: "Singapore",
+        destination: "Rotterdam",
+        departureDate: new Date("2024-01-01"),
+        arrivalDate: null,
+        status: "active",
+      },
+      {
+        shipId: ships[1].id,
+        voyageNumber: "VOY-2024-002",
+        origin: "Shanghai",
+        destination: "Long Beach",
+        departureDate: new Date("2024-01-05"),
+        arrivalDate: null,
+        status: "active",
+      },
+      {
+        shipId: ships[2].id,
+        voyageNumber: "VOY-2024-003",
+        origin: "Abu Dhabi",
+        destination: "Houston",
+        departureDate: new Date("2024-01-10"),
+        arrivalDate: null,
+        status: "active",
+      },
+    ];
+
+    for (const voyageData of sampleVoyages) {
+      await storage.createVoyage(voyageData);
+    }
+    voyages = await storage.getVoyages();
+  }
+
+  console.log(`Generating performance data for ${ships.length} ships...`);
 
   // Generate data for each ship
   for (const ship of ships) {
