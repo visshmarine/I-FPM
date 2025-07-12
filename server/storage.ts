@@ -24,6 +24,8 @@ import {
   type AuxiliaryData,
   type InsertAuxiliaryData,
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // Ships
@@ -66,6 +68,289 @@ export interface IStorage {
   createAuxiliaryData(data: InsertAuxiliaryData): Promise<AuxiliaryData>;
   getAuxiliaryData(shipId?: number, limit?: number): Promise<AuxiliaryData[]>;
   getLatestAuxiliaryData(shipId: number): Promise<AuxiliaryData | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<any | undefined> {
+    // User management not implemented for this maritime app
+    return undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<any | undefined> {
+    // User management not implemented for this maritime app
+    return undefined;
+  }
+
+  async createUser(insertUser: any): Promise<any> {
+    // User management not implemented for this maritime app
+    throw new Error("User management not implemented");
+  }
+
+  // Ships
+  async createShip(ship: InsertShip): Promise<Ship> {
+    const [newShip] = await db
+      .insert(ships)
+      .values(ship)
+      .returning();
+    return newShip;
+  }
+
+  async getShips(): Promise<Ship[]> {
+    return await db.select().from(ships);
+  }
+
+  async getShip(id: number): Promise<Ship | undefined> {
+    const [ship] = await db.select().from(ships).where(eq(ships.id, id));
+    return ship || undefined;
+  }
+
+  // Voyages
+  async createVoyage(voyage: InsertVoyage): Promise<Voyage> {
+    const [newVoyage] = await db
+      .insert(voyages)
+      .values(voyage)
+      .returning();
+    return newVoyage;
+  }
+
+  async getVoyages(): Promise<Voyage[]> {
+    return await db.select().from(voyages);
+  }
+
+  async getVoyagesByShip(shipId: number): Promise<Voyage[]> {
+    return await db.select().from(voyages).where(eq(voyages.shipId, shipId));
+  }
+
+  async getVoyage(id: number): Promise<Voyage | undefined> {
+    const [voyage] = await db.select().from(voyages).where(eq(voyages.id, id));
+    return voyage || undefined;
+  }
+
+  // Fuel Data
+  async createFuelData(data: InsertFuelData): Promise<FuelData> {
+    const [newData] = await db
+      .insert(fuelData)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getFuelData(shipId?: number, voyageId?: number, limit?: number): Promise<FuelData[]> {
+    let queryBuilder = db.select().from(fuelData);
+    
+    const conditions = [];
+    if (shipId) conditions.push(eq(fuelData.shipId, shipId));
+    if (voyageId) conditions.push(eq(fuelData.voyageId, voyageId));
+    
+    if (conditions.length > 0) {
+      queryBuilder = queryBuilder.where(and(...conditions));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(fuelData.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestFuelData(shipId: number): Promise<FuelData | undefined> {
+    const [data] = await db
+      .select()
+      .from(fuelData)
+      .where(eq(fuelData.shipId, shipId))
+      .orderBy(desc(fuelData.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
+
+  // Environmental Data
+  async createEnvironmentalData(data: InsertEnvironmentalData): Promise<EnvironmentalData> {
+    const [newData] = await db
+      .insert(environmentalData)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getEnvironmentalData(shipId?: number, voyageId?: number, limit?: number): Promise<EnvironmentalData[]> {
+    let queryBuilder = db.select().from(environmentalData);
+    
+    const conditions = [];
+    if (shipId) conditions.push(eq(environmentalData.shipId, shipId));
+    if (voyageId) conditions.push(eq(environmentalData.voyageId, voyageId));
+    
+    if (conditions.length > 0) {
+      queryBuilder = queryBuilder.where(and(...conditions));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(environmentalData.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestEnvironmentalData(shipId: number): Promise<EnvironmentalData | undefined> {
+    const [data] = await db
+      .select()
+      .from(environmentalData)
+      .where(eq(environmentalData.shipId, shipId))
+      .orderBy(desc(environmentalData.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
+
+  // Hull Condition
+  async createHullCondition(data: InsertHullCondition): Promise<HullCondition> {
+    const [newData] = await db
+      .insert(hullCondition)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getHullCondition(shipId?: number, limit?: number): Promise<HullCondition[]> {
+    let queryBuilder = db.select().from(hullCondition);
+    
+    if (shipId) {
+      queryBuilder = queryBuilder.where(eq(hullCondition.shipId, shipId));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(hullCondition.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestHullCondition(shipId: number): Promise<HullCondition | undefined> {
+    const [data] = await db
+      .select()
+      .from(hullCondition)
+      .where(eq(hullCondition.shipId, shipId))
+      .orderBy(desc(hullCondition.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
+
+  // Trim Data
+  async createTrimData(data: InsertTrimData): Promise<TrimData> {
+    const [newData] = await db
+      .insert(trimData)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getTrimData(shipId?: number, voyageId?: number, limit?: number): Promise<TrimData[]> {
+    let queryBuilder = db.select().from(trimData);
+    
+    const conditions = [];
+    if (shipId) conditions.push(eq(trimData.shipId, shipId));
+    if (voyageId) conditions.push(eq(trimData.voyageId, voyageId));
+    
+    if (conditions.length > 0) {
+      queryBuilder = queryBuilder.where(and(...conditions));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(trimData.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestTrimData(shipId: number): Promise<TrimData | undefined> {
+    const [data] = await db
+      .select()
+      .from(trimData)
+      .where(eq(trimData.shipId, shipId))
+      .orderBy(desc(trimData.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
+
+  // Compliance Data
+  async createComplianceData(data: InsertComplianceData): Promise<ComplianceData> {
+    const [newData] = await db
+      .insert(complianceData)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getComplianceData(shipId?: number, voyageId?: number, limit?: number): Promise<ComplianceData[]> {
+    let queryBuilder = db.select().from(complianceData);
+    
+    const conditions = [];
+    if (shipId) conditions.push(eq(complianceData.shipId, shipId));
+    if (voyageId) conditions.push(eq(complianceData.voyageId, voyageId));
+    
+    if (conditions.length > 0) {
+      queryBuilder = queryBuilder.where(and(...conditions));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(complianceData.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestComplianceData(shipId: number): Promise<ComplianceData | undefined> {
+    const [data] = await db
+      .select()
+      .from(complianceData)
+      .where(eq(complianceData.shipId, shipId))
+      .orderBy(desc(complianceData.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
+
+  // Auxiliary Data
+  async createAuxiliaryData(data: InsertAuxiliaryData): Promise<AuxiliaryData> {
+    const [newData] = await db
+      .insert(auxiliaryData)
+      .values(data)
+      .returning();
+    return newData;
+  }
+
+  async getAuxiliaryData(shipId?: number, limit?: number): Promise<AuxiliaryData[]> {
+    let queryBuilder = db.select().from(auxiliaryData);
+    
+    if (shipId) {
+      queryBuilder = queryBuilder.where(eq(auxiliaryData.shipId, shipId));
+    }
+    
+    queryBuilder = queryBuilder.orderBy(desc(auxiliaryData.timestamp));
+    
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    
+    return await queryBuilder;
+  }
+
+  async getLatestAuxiliaryData(shipId: number): Promise<AuxiliaryData | undefined> {
+    const [data] = await db
+      .select()
+      .from(auxiliaryData)
+      .where(eq(auxiliaryData.shipId, shipId))
+      .orderBy(desc(auxiliaryData.timestamp))
+      .limit(1);
+    return data || undefined;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -414,4 +699,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateRealisticData } from "../client/src/lib/data-generator";
+import { mlPredictor } from "./ml-predictor";
+import { weatherService } from "./weather-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Generate realistic data on server startup
@@ -252,6 +254,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(dashboardData);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch dashboard data", error });
+    }
+  });
+
+  // Machine Learning Predictive Maintenance
+  app.get("/api/ml/predictive-maintenance/:shipId", async (req, res) => {
+    try {
+      const shipId = parseInt(req.params.shipId);
+      const recommendations = await mlPredictor.generatePredictiveMaintenanceRecommendations(shipId);
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Predictive maintenance error:", error);
+      res.status(500).json({ error: "Failed to generate maintenance recommendations" });
+    }
+  });
+
+  // Weather-Adjusted Performance Analysis
+  app.get("/api/ml/weather-adjusted-performance/:shipId", async (req, res) => {
+    try {
+      const shipId = parseInt(req.params.shipId);
+      const voyageId = req.query.voyageId ? parseInt(req.query.voyageId as string) : undefined;
+      const analysis = await mlPredictor.calculateWeatherAdjustedPerformance(shipId, voyageId);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Weather adjustment error:", error);
+      res.status(500).json({ error: "Failed to calculate weather-adjusted performance" });
+    }
+  });
+
+  // Weather Data Endpoints
+  app.get("/api/weather/current/:shipId", async (req, res) => {
+    try {
+      const shipId = parseInt(req.params.shipId);
+      const weatherData = await weatherService.getCurrentWeatherForShip(shipId);
+      res.json(weatherData);
+    } catch (error) {
+      console.error("Weather data error:", error);
+      res.status(500).json({ error: "Failed to fetch weather data" });
+    }
+  });
+
+  app.get("/api/weather/data-sources", async (req, res) => {
+    try {
+      await weatherService.updateDataSourceStatus();
+      const sources = weatherService.getDataSources();
+      res.json(sources);
+    } catch (error) {
+      console.error("Data sources error:", error);
+      res.status(500).json({ error: "Failed to fetch data sources" });
     }
   });
 
