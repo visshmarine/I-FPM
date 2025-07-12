@@ -13,9 +13,12 @@ import AdvancedMetrics from "@/components/dashboard/advanced-metrics";
 import HullCondition from "@/components/dashboard/hull-condition";
 import Alerts from "@/components/dashboard/alerts";
 import ExportActions from "@/components/dashboard/export-actions";
+import DataInputForm from "@/components/dashboard/data-input-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Plus, Database } from "lucide-react";
+import { queryClient } from "@/lib/queryClient";
 import type { Ship } from "@shared/schema";
 
 export default function Dashboard() {
@@ -24,6 +27,7 @@ export default function Dashboard() {
   const [selectedVoyageId, setSelectedVoyageId] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("7days");
   const [engineType, setEngineType] = useState<string>("all");
+  const [showDataInput, setShowDataInput] = useState<boolean>(false);
 
   // Fetch ships for the dropdown
   const { data: ships = [], isLoading: shipsLoading } = useQuery({
