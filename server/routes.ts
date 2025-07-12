@@ -204,6 +204,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== DATA INPUT ENDPOINTS (POST) =====
+  
+  // Create new ship
+  app.post("/api/ships", async (req, res) => {
+    try {
+      const shipData = req.body;
+      const newShip = await storage.createShip(shipData);
+      res.status(201).json(newShip);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create ship", error });
+    }
+  });
+
+  // Create new voyage
+  app.post("/api/voyages", async (req, res) => {
+    try {
+      const voyageData = req.body;
+      const newVoyage = await storage.createVoyage(voyageData);
+      res.status(201).json(newVoyage);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create voyage", error });
+    }
+  });
+
+  // Add fuel performance data
+  app.post("/api/fuel-data", async (req, res) => {
+    try {
+      const fuelData = req.body;
+      const newData = await storage.createFuelData(fuelData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add fuel data", error });
+    }
+  });
+
+  // Add environmental data
+  app.post("/api/environmental-data", async (req, res) => {
+    try {
+      const environmentalData = req.body;
+      const newData = await storage.createEnvironmentalData(environmentalData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add environmental data", error });
+    }
+  });
+
+  // Add hull condition data
+  app.post("/api/hull-condition", async (req, res) => {
+    try {
+      const hullData = req.body;
+      const newData = await storage.createHullCondition(hullData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add hull condition data", error });
+    }
+  });
+
+  // Add trim data
+  app.post("/api/trim-data", async (req, res) => {
+    try {
+      const trimData = req.body;
+      const newData = await storage.createTrimData(trimData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add trim data", error });
+    }
+  });
+
+  // Add compliance data
+  app.post("/api/compliance-data", async (req, res) => {
+    try {
+      const complianceData = req.body;
+      const newData = await storage.createComplianceData(complianceData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add compliance data", error });
+    }
+  });
+
+  // Add auxiliary data
+  app.post("/api/auxiliary-data", async (req, res) => {
+    try {
+      const auxiliaryData = req.body;
+      const newData = await storage.createAuxiliaryData(auxiliaryData);
+      res.status(201).json(newData);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to add auxiliary data", error });
+    }
+  });
+
   // Dashboard summary endpoint
   app.get("/api/dashboard/:shipId", async (req, res) => {
     try {
