@@ -261,6 +261,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Hull Performance Calculator endpoint
+  app.post("/api/calculate-hull-performance", async (req, res) => {
+    try {
+      const { hullCalculator } = await import("./hull-calculator");
+      
+      const {
+        currentPower,
+        baselinePower,
+        currentSpeed,
+        baselineSpeed,
+        currentSfoc,
+        baselineSfoc,
+        seaState,
+        windSpeed,
+        waveHeight
+      } = req.body;
+
+      if (!currentPower || !baselinePower || !currentSfoc || !baselineSfoc) {
+        return res.status(400).json({ 
+          error: "Missing required parameters: currentPower, baselinePower, currentSfoc, baselineSfoc" 
+        });
+      }
+
+      const results = hullCalculator.calculateHullPerformance({
+        currentPower,
+        baselinePower,
+        currentSpeed,
+        baselineSpeed,
+        currentSfoc,
+        baselineSfoc,
+        seaState,
+        windSpeed,
+        waveHeight
+      });
+
+      const economicImpact = hullCalculator.calculateEconomicImpact({
+        currentPower,
+        baselinePower,
+        currentSpeed,
+        baselineSpeed,
+        currentSfoc,
+        baselineSfoc,
+        seaState,
+        windSpeed,
+        waveHeight
+      });
+
+      res.json({ ...results, economicImpact });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to calculate hull performance", details: error.message });
+    }
+  });
+
   // Add trim data
   app.post("/api/trim-data", async (req, res) => {
     try {

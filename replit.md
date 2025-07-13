@@ -39,6 +39,12 @@ Preferred communication style: Simple, everyday language.
 - **Compliance Data**: Regulatory compliance tracking (CII, EEOI)
 - **Auxiliary Data**: Additional engine and system data
 
+### Advanced Calculation Engine
+- **Hull Performance Calculator**: Power-based and SFOC-based hull roughness index calculations
+- **Weather Corrections**: ISO 15016 compliant environmental adjustments
+- **Economic Analysis**: ROI calculations for hull cleaning and maintenance planning
+- **Performance Degradation**: Trend analysis and maintenance recommendations
+
 ### Core Features
 - **Real-time Monitoring**: Live fuel consumption and performance tracking
 - **Performance Analytics**: SFOC analysis, efficiency trending, comparative reporting
@@ -46,6 +52,9 @@ Preferred communication style: Simple, everyday language.
 - **Environmental Impact**: Weather-adjusted performance analysis
 - **Hull Optimization**: Condition monitoring and trim optimization recommendations
 - **Alert System**: Performance degradation and efficiency alerts
+- **Hull Performance Calculator**: Advanced calculation engine for hull roughness index and efficiency analysis
+- **Data Input System**: Comprehensive 5-tab data entry interface with validation
+- **Export Functionality**: PDF reports and CSV data exports with real vessel data
 
 ## Data Flow
 

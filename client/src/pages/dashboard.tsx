@@ -14,10 +14,12 @@ import HullCondition from "@/components/dashboard/hull-condition";
 import Alerts from "@/components/dashboard/alerts";
 import ExportActions from "@/components/dashboard/export-actions";
 import DataInputForm from "@/components/dashboard/data-input-form";
+import HullCalculator from "@/components/dashboard/hull-calculator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Plus, Database } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Plus, Database, Calculator } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import type { Ship } from "@shared/schema";
 
@@ -114,23 +116,42 @@ export default function Dashboard() {
             className="bg-success-green hover:bg-green-600 text-white"
           >
             <Plus className="h-4 w-4 mr-2" />
-            {showDataInput ? 'Hide Data Input' : 'Add New Data'}
+            {showDataInput ? 'Hide Tools' : 'Data Input & Tools'}
           </Button>
         </div>
 
-        {/* Data Input Form */}
+        {/* Data Input and Tools */}
         {showDataInput && (
           <div className="mb-6">
-            <DataInputForm
-              ships={ships}
-              voyages={dashboardData?.voyages || []}
-              onDataAdded={() => {
-                setShowDataInput(false);
-                queryClient.invalidateQueries({ queryKey: ["/api/ships"] });
-                queryClient.invalidateQueries({ queryKey: ["/api/dashboard", selectedShipId] });
-                queryClient.invalidateQueries({ queryKey: ["/api/fuel-data"] });
-              }}
-            />
+            <Tabs defaultValue="input" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="input" className="flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Data Input
+                </TabsTrigger>
+                <TabsTrigger value="calculator" className="flex items-center gap-2">
+                  <Calculator className="h-4 w-4" />
+                  Hull Calculator
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="input">
+                <DataInputForm
+                  ships={ships}
+                  voyages={dashboardData?.voyages || []}
+                  onDataAdded={() => {
+                    setShowDataInput(false);
+                    queryClient.invalidateQueries({ queryKey: ["/api/ships"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/dashboard", selectedShipId] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/fuel-data"] });
+                  }}
+                />
+              </TabsContent>
+              
+              <TabsContent value="calculator">
+                <HullCalculator />
+              </TabsContent>
+            </Tabs>
           </div>
         )}
 

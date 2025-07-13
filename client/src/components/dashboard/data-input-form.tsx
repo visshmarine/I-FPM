@@ -524,14 +524,26 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
                 <div className="space-y-2">
                   <Label htmlFor="roughnessIndex">Hull Roughness Index</Label>
                   <Input id="roughnessIndex" name="roughnessIndex" type="number" step="0.1" placeholder="125.8" />
+                  <p className="text-xs text-gray-500">Clean hull: 100-110, Heavy fouling: 150+</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="propellerSlip">Propeller Slip (%)</Label>
                   <Input id="propellerSlip" name="propellerSlip" type="number" step="0.1" placeholder="14.2" />
+                  <p className="text-xs text-gray-500">Typical range: 8-20%</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="hullEfficiency">Hull Efficiency (%)</Label>
                   <Input id="hullEfficiency" name="hullEfficiency" type="number" step="0.1" placeholder="-2.8" />
+                  <p className="text-xs text-gray-500">Negative = degradation from baseline</p>
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-medium text-blue-900 mb-2">How to Calculate:</h4>
+                <div className="text-sm text-blue-800 space-y-1">
+                  <p><strong>Hull Roughness Index:</strong> (Current Power / Baseline Power) × 100</p>
+                  <p><strong>Hull Efficiency:</strong> ((Current SFOC - Baseline SFOC) / Baseline SFOC) × 100</p>
+                  <p><strong>Baseline:</strong> Performance with clean hull at same conditions</p>
                 </div>
               </div>
               
