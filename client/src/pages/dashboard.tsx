@@ -24,6 +24,8 @@ import DataUploadTool from "@/components/dashboard/data-upload-tool";
 import BaselineModelCard from "@/components/dashboard/baseline-model-card";
 import RealTimeMonitoring from "@/components/dashboard/real-time-monitoring";
 import AdvancedHullAnalytics from "@/components/dashboard/advanced-hull-analytics";
+import SidebarNavigation from "@/components/dashboard/sidebar-navigation";
+import AnalysisContent from "@/components/dashboard/analysis-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,7 @@ export default function Dashboard() {
   const [dateRange, setDateRange] = useState<string>("7days");
   const [engineType, setEngineType] = useState<string>("all");
   const [showDataInput, setShowDataInput] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState('fuel');
 
   // Fetch ships for the dropdown
   const { data: ships = [], isLoading: shipsLoading } = useQuery({
@@ -101,10 +104,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar Navigation */}
+      <SidebarNavigation 
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        data={dashboardData}
+      />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        <Header />
+        
+        <main className="flex-1 overflow-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-6">
         <ControlPanel
           ships={ships}
           selectedShipId={selectedShipId}
@@ -174,64 +187,35 @@ export default function Dashboard() {
 
         <KpiCards data={dashboardData?.current} />
 
-        {/* Primary Performance Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <SfocChart data={fuelHistory} />
-          <FuelSpeedChart data={fuelHistory} />
-          <EngineLoadChart data={dashboardData?.current} />
-          <HullResistanceChart data={fuelHistory} />
-        </div>
-
-        {/* Environmental and Efficiency Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <EEOIChart data={dashboardData} />
-          <TrimOptimizationChart data={dashboardData} />
-          <WeatherFuelCorrelation data={dashboardData} />
-          <FuelCostNauticalMile data={dashboardData} />
-        </div>
-
-        {/* Advanced Analytics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <AdvancedMetrics data={dashboardData?.current} />
-          <AuxiliaryConsumptionBreakdown data={dashboardData} />
-          <BaselineModelCard data={dashboardData} />
-        </div>
-
-        {/* Advanced Hull Analytics and Real-time Monitoring */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <AdvancedHullAnalytics data={dashboardData} />
-          <RealTimeMonitoring data={dashboardData} />
-        </div>
-
-        {/* Hull Condition and Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <HullCondition data={dashboardData?.current?.hull} />
-          <div className="space-y-6">
-            <AuxiliaryChart data={dashboardData?.current?.auxiliary} />
-            <Alerts data={dashboardData?.current} />
-          </div>
-        </div>
-
-        <ExportActions 
-          shipData={dashboardData?.ship}
-          dashboardData={dashboardData}
+        {/* Analysis Content Based on Sidebar Selection */}
+        <AnalysisContent 
+          activeSection={activeSection}
+          data={dashboardData}
           fuelHistory={fuelHistory}
         />
-      </main>
 
-      <footer className="bg-dark-gray text-white py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <span>© 2024 I-FPM System. IMO Compliant Fuel Monitoring.</span>
-            </div>
-            <div className="flex items-center space-x-4 text-sm">
-              <span>Last Update: {new Date().toLocaleString("en-US", { timeZone: "UTC" })} UTC</span>
-              <span className="text-success-green">● System Operational</span>
+            <ExportActions 
+              shipData={dashboardData?.ship}
+              dashboardData={dashboardData}
+              fuelHistory={fuelHistory}
+            />
+          </div>
+        </main>
+
+        <footer className="bg-dark-gray text-white py-4">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <span>© 2024 I-FPM System. IMO Compliant Fuel Monitoring.</span>
+              </div>
+              <div className="flex items-center space-x-4 text-sm">
+                <span>Last Update: {new Date().toLocaleString("en-US", { timeZone: "UTC" })} UTC</span>
+                <span className="text-success-green">● System Operational</span>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
