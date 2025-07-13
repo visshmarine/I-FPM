@@ -102,16 +102,16 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
     const formData = new FormData(e.currentTarget);
     const fuelData = {
       shipId: parseInt(formData.get('shipId') as string),
-      voyageId: formData.get('voyageId') ? parseInt(formData.get('voyageId') as string) : null,
+      voyageId: formData.get('voyageId') && formData.get('voyageId') !== '' ? parseInt(formData.get('voyageId') as string) : null,
       timestamp: new Date().toISOString(),
-      sfoc: formData.get('sfoc') as string,
-      fuelConsumptionRate: formData.get('fuelConsumptionRate') as string,
-      engineLoadFactor: formData.get('engineLoadFactor') as string,
-      speedThroughWater: formData.get('speedThroughWater') as string,
-      speedOverGround: formData.get('speedOverGround') as string,
-      enginePower: formData.get('enginePower') as string,
-      fuelType: formData.get('fuelType') as string,
-      co2Emissions: formData.get('co2Emissions') as string,
+      sfoc: formData.get('sfoc') as string || null,
+      fuelConsumptionRate: formData.get('fuelConsumptionRate') as string || null,
+      engineLoadFactor: formData.get('engineLoadFactor') as string || null,
+      speedThroughWater: formData.get('speedThroughWater') as string || null,
+      speedOverGround: formData.get('speedOverGround') as string || null,
+      enginePower: formData.get('enginePower') as string || null,
+      fuelType: formData.get('fuelType') as string || 'HFO',
+      co2Emissions: formData.get('co2Emissions') as string || null,
     };
 
     try {
@@ -138,6 +138,85 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
     }
   };
 
+  const handleEnvironmentalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const environmentalData = {
+      shipId: parseInt(formData.get('shipId') as string),
+      voyageId: formData.get('voyageId') && formData.get('voyageId') !== '' ? parseInt(formData.get('voyageId') as string) : null,
+      timestamp: new Date().toISOString(),
+      windSpeed: formData.get('windSpeed') as string || null,
+      waveHeight: formData.get('waveHeight') as string || null,
+      windDirection: formData.get('windDirection') ? parseInt(formData.get('windDirection') as string) : null,
+      seaState: formData.get('seaState') ? parseInt(formData.get('seaState') as string) : null,
+      weatherImpact: formData.get('weatherImpact') as string || null,
+    };
+
+    try {
+      await apiRequest('/api/environmental-data', {
+        method: 'POST',
+        body: JSON.stringify(environmentalData),
+      });
+      
+      toast({
+        title: "Environmental Data Added",
+        description: "Weather conditions have been recorded successfully.",
+      });
+      
+      (e.target as HTMLFormElement).reset();
+      onDataAdded();
+    } catch (error) {
+      toast({
+        title: "Error Adding Environmental Data",
+        description: "Failed to add weather data. Please check the values and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleHullSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const hullData = {
+      shipId: parseInt(formData.get('shipId') as string),
+      timestamp: new Date().toISOString(),
+      roughnessIndex: formData.get('roughnessIndex') as string || null,
+      propellerSlip: formData.get('propellerSlip') as string || null,
+      hullEfficiency: formData.get('hullEfficiency') as string || null,
+      daysSinceLastCleaning: formData.get('daysSinceLastCleaning') ? parseInt(formData.get('daysSinceLastCleaning') as string) : null,
+      lastCleaningDate: formData.get('lastCleaningDate') ? new Date(formData.get('lastCleaningDate') as string).toISOString() : null,
+    };
+
+    try {
+      await apiRequest('/api/hull-condition', {
+        method: 'POST',
+        body: JSON.stringify(hullData),
+      });
+      
+      toast({
+        title: "Hull Condition Data Added",
+        description: "Hull efficiency metrics have been recorded successfully.",
+      });
+      
+      (e.target as HTMLFormElement).reset();
+      onDataAdded();
+    } catch (error) {
+      toast({
+        title: "Error Adding Hull Data",
+        description: "Failed to add hull condition data. Please check the values and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -151,7 +230,7 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="ships" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="ships" className="flex items-center gap-2">
               <ShipIcon className="h-4 w-4" />
               Ships
@@ -163,6 +242,14 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
             <TabsTrigger value="fuel" className="flex items-center gap-2">
               <Fuel className="h-4 w-4" />
               Fuel Data
+            </TabsTrigger>
+            <TabsTrigger value="environmental" className="flex items-center gap-2">
+              <Gauge className="h-4 w-4" />
+              Environment
+            </TabsTrigger>
+            <TabsTrigger value="hull" className="flex items-center gap-2">
+              <ShipIcon className="h-4 w-4" />
+              Hull & Compliance
             </TabsTrigger>
           </TabsList>
 
@@ -345,6 +432,123 @@ export default function DataInputForm({ ships, voyages, onDataAdded }: DataInput
               <Button type="submit" disabled={isLoading || ships.length === 0} className="w-full">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Add Fuel Data
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="environmental" className="space-y-4">
+            <form onSubmit={handleEnvironmentalSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="envShipId">Select Ship</Label>
+                  <Select name="shipId" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose ship" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ships.map((ship) => (
+                        <SelectItem key={ship.id} value={ship.id.toString()}>
+                          {ship.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="envVoyageId">Voyage (Optional)</Label>
+                  <Select name="voyageId">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select voyage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {voyages.map((voyage) => (
+                        <SelectItem key={voyage.id} value={voyage.id.toString()}>
+                          {voyage.voyageNumber}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="windSpeed">Wind Speed (knots)</Label>
+                  <Input id="windSpeed" name="windSpeed" type="number" step="0.1" placeholder="15.2" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="waveHeight">Wave Height (m)</Label>
+                  <Input id="waveHeight" name="waveHeight" type="number" step="0.1" placeholder="2.1" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="windDirection">Wind Direction (°)</Label>
+                  <Input id="windDirection" name="windDirection" type="number" placeholder="245" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="seaState">Sea State (0-9)</Label>
+                  <Input id="seaState" name="seaState" type="number" min="0" max="9" placeholder="3" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="weatherImpact">Weather Impact (%)</Label>
+                <Input id="weatherImpact" name="weatherImpact" type="number" step="0.1" placeholder="3.2" />
+              </div>
+              
+              <Button type="submit" disabled={isLoading || ships.length === 0} className="w-full">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Add Environmental Data
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="hull" className="space-y-4">
+            <form onSubmit={handleHullSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="hullShipId">Select Ship</Label>
+                <Select name="shipId" required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose ship" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ships.map((ship) => (
+                      <SelectItem key={ship.id} value={ship.id.toString()}>
+                        {ship.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="roughnessIndex">Hull Roughness Index</Label>
+                  <Input id="roughnessIndex" name="roughnessIndex" type="number" step="0.1" placeholder="125.8" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="propellerSlip">Propeller Slip (%)</Label>
+                  <Input id="propellerSlip" name="propellerSlip" type="number" step="0.1" placeholder="14.2" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hullEfficiency">Hull Efficiency (%)</Label>
+                  <Input id="hullEfficiency" name="hullEfficiency" type="number" step="0.1" placeholder="-2.8" />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="daysSinceLastCleaning">Days Since Cleaning</Label>
+                  <Input id="daysSinceLastCleaning" name="daysSinceLastCleaning" type="number" placeholder="85" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastCleaningDate">Last Cleaning Date</Label>
+                  <Input id="lastCleaningDate" name="lastCleaningDate" type="date" />
+                </div>
+              </div>
+              
+              <Button type="submit" disabled={isLoading || ships.length === 0} className="w-full">
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Add Hull Condition Data
               </Button>
             </form>
           </TabsContent>

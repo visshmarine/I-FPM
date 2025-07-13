@@ -107,6 +107,33 @@ export default function Dashboard() {
           voyages={dashboardData?.voyages || []}
         />
 
+        {/* Data Input Toggle Button */}
+        <div className="mb-6">
+          <Button
+            onClick={() => setShowDataInput(!showDataInput)}
+            className="bg-success-green hover:bg-green-600 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {showDataInput ? 'Hide Data Input' : 'Add New Data'}
+          </Button>
+        </div>
+
+        {/* Data Input Form */}
+        {showDataInput && (
+          <div className="mb-6">
+            <DataInputForm
+              ships={ships}
+              voyages={dashboardData?.voyages || []}
+              onDataAdded={() => {
+                setShowDataInput(false);
+                queryClient.invalidateQueries({ queryKey: ["/api/ships"] });
+                queryClient.invalidateQueries({ queryKey: ["/api/dashboard", selectedShipId] });
+                queryClient.invalidateQueries({ queryKey: ["/api/fuel-data"] });
+              }}
+            />
+          </div>
+        )}
+
         <KpiCards data={dashboardData?.current} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
