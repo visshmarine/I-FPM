@@ -53,8 +53,10 @@ Preferred communication style: Simple, everyday language.
 - **Hull Optimization**: Condition monitoring and trim optimization recommendations
 - **Alert System**: Performance degradation and efficiency alerts
 - **Hull Performance Calculator**: Advanced calculation engine for hull roughness index and efficiency analysis
+- **CII Calculator**: Complete Carbon Intensity Indicator calculation with IMO formula implementation
 - **Data Input System**: Comprehensive 5-tab data entry interface with validation
 - **Export Functionality**: PDF reports and CSV data exports with real vessel data
+- **Sidebar Navigation**: Organized analysis groups (FUEL, HULL, ENGINE, ENVIRONMENT) with contextual content
 
 ## Data Flow
 

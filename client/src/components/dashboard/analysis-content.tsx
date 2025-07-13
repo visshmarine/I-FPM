@@ -14,6 +14,7 @@ import BaselineModelCard from "@/components/dashboard/baseline-model-card";
 import RealTimeMonitoring from "@/components/dashboard/real-time-monitoring";
 import AdvancedMetrics from "@/components/dashboard/advanced-metrics";
 import HullCalculator from "@/components/dashboard/hull-calculator";
+import CIICalculator from "@/components/dashboard/cii-calculator";
 
 interface AnalysisContentProps {
   activeSection: string;
@@ -293,31 +294,34 @@ export default function AnalysisContent({ activeSection, data, fuelHistory }: An
       
       case 'environment-compliance':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <EEOIChart data={data} />
-            <div className="bg-white border rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Compliance Status</h3>
-              <div className="space-y-4">
-                <div className="border-b pb-2">
-                  <div className="flex justify-between">
-                    <span>CII Rating:</span>
-                    <span className="font-bold text-yellow-600">C</span>
+          <div className="grid grid-cols-1 gap-6">
+            <CIICalculator />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <EEOIChart data={data} />
+              <div className="bg-white border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Compliance Status</h3>
+                <div className="space-y-4">
+                  <div className="border-b pb-2">
+                    <div className="flex justify-between">
+                      <span>CII Rating:</span>
+                      <span className="font-bold text-yellow-600">C</span>
+                    </div>
+                    <div className="text-sm text-gray-600">Carbon Intensity Indicator</div>
                   </div>
-                  <div className="text-sm text-gray-600">Carbon Intensity Indicator</div>
-                </div>
-                <div className="border-b pb-2">
-                  <div className="flex justify-between">
-                    <span>EEOI:</span>
-                    <span className="font-bold text-yellow-600">Above Target</span>
+                  <div className="border-b pb-2">
+                    <div className="flex justify-between">
+                      <span>EEOI:</span>
+                      <span className="font-bold text-yellow-600">Above Target</span>
+                    </div>
+                    <div className="text-sm text-gray-600">Energy Efficiency Operational Index</div>
                   </div>
-                  <div className="text-sm text-gray-600">Energy Efficiency Operational Index</div>
-                </div>
-                <div className="border-b pb-2">
-                  <div className="flex justify-between">
-                    <span>MRV Compliance:</span>
-                    <span className="font-bold text-green-600">Compliant</span>
+                  <div className="border-b pb-2">
+                    <div className="flex justify-between">
+                      <span>MRV Compliance:</span>
+                      <span className="font-bold text-green-600">Compliant</span>
+                    </div>
+                    <div className="text-sm text-gray-600">Monitoring, Reporting, Verification</div>
                   </div>
-                  <div className="text-sm text-gray-600">Monitoring, Reporting, Verification</div>
                 </div>
               </div>
             </div>
