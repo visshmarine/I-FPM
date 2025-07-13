@@ -128,7 +128,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <ExportActions />
+        <ExportActions 
+          shipData={dashboardData?.ship}
+          dashboardData={dashboardData}
+          fuelHistory={fuelHistory}
+        />
       </main>
 
       <footer className="bg-dark-gray text-white py-4 mt-8">
