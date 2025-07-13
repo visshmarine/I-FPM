@@ -180,7 +180,7 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-lg ${section.color} text-white`}>
                           {Icon === VisshLogo ? (
-                            <VisshLogo size="sm" className="brightness-0 invert" />
+                            <VisshLogo size="sm" />
                           ) : (
                             <Icon className="h-4 w-4" />
                           )}
