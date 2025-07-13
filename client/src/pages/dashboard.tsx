@@ -9,17 +9,26 @@ import FuelSpeedChart from "@/components/dashboard/charts/fuel-speed-chart";
 import EngineLoadChart from "@/components/dashboard/charts/engine-load-chart";
 import HullResistanceChart from "@/components/dashboard/charts/hull-resistance-chart";
 import AuxiliaryChart from "@/components/dashboard/charts/auxiliary-chart";
+import EEOIChart from "@/components/dashboard/charts/eeoi-chart";
+import TrimOptimizationChart from "@/components/dashboard/charts/trim-optimization-chart";
+import WeatherFuelCorrelation from "@/components/dashboard/charts/weather-fuel-correlation";
+import AuxiliaryConsumptionBreakdown from "@/components/dashboard/charts/auxiliary-consumption-breakdown";
+import FuelCostNauticalMile from "@/components/dashboard/charts/fuel-cost-nautical-mile";
 import AdvancedMetrics from "@/components/dashboard/advanced-metrics";
 import HullCondition from "@/components/dashboard/hull-condition";
 import Alerts from "@/components/dashboard/alerts";
 import ExportActions from "@/components/dashboard/export-actions";
 import DataInputForm from "@/components/dashboard/data-input-form";
 import HullCalculator from "@/components/dashboard/hull-calculator";
+import DataUploadTool from "@/components/dashboard/data-upload-tool";
+import BaselineModelCard from "@/components/dashboard/baseline-model-card";
+import RealTimeMonitoring from "@/components/dashboard/real-time-monitoring";
+import AdvancedHullAnalytics from "@/components/dashboard/advanced-hull-analytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Plus, Database, Calculator } from "lucide-react";
+import { AlertCircle, Plus, Database, Calculator, Upload } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import type { Ship } from "@shared/schema";
 
@@ -124,10 +133,14 @@ export default function Dashboard() {
         {showDataInput && (
           <div className="mb-6">
             <Tabs defaultValue="input" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="input" className="flex items-center gap-2">
                   <Database className="h-4 w-4" />
                   Data Input
+                </TabsTrigger>
+                <TabsTrigger value="upload" className="flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  Bulk Upload
                 </TabsTrigger>
                 <TabsTrigger value="calculator" className="flex items-center gap-2">
                   <Calculator className="h-4 w-4" />
@@ -148,6 +161,10 @@ export default function Dashboard() {
                 />
               </TabsContent>
               
+              <TabsContent value="upload">
+                <DataUploadTool />
+              </TabsContent>
+              
               <TabsContent value="calculator">
                 <HullCalculator />
               </TabsContent>
@@ -157,6 +174,7 @@ export default function Dashboard() {
 
         <KpiCards data={dashboardData?.current} />
 
+        {/* Primary Performance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <SfocChart data={fuelHistory} />
           <FuelSpeedChart data={fuelHistory} />
@@ -164,10 +182,28 @@ export default function Dashboard() {
           <HullResistanceChart data={fuelHistory} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <AdvancedMetrics data={dashboardData?.current} />
+        {/* Environmental and Efficiency Metrics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <EEOIChart data={dashboardData} />
+          <TrimOptimizationChart data={dashboardData} />
+          <WeatherFuelCorrelation data={dashboardData} />
+          <FuelCostNauticalMile data={dashboardData} />
         </div>
 
+        {/* Advanced Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <AdvancedMetrics data={dashboardData?.current} />
+          <AuxiliaryConsumptionBreakdown data={dashboardData} />
+          <BaselineModelCard data={dashboardData} />
+        </div>
+
+        {/* Advanced Hull Analytics and Real-time Monitoring */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <AdvancedHullAnalytics data={dashboardData} />
+          <RealTimeMonitoring data={dashboardData} />
+        </div>
+
+        {/* Hull Condition and Alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <HullCondition data={dashboardData?.current?.hull} />
           <div className="space-y-6">

@@ -1,236 +1,142 @@
-# I-FPM Data Input Guide
+# Data Input Guide for I-FPM System
 
-## How to Input Data into Your Maritime Fuel Performance Monitoring System
+## Excel/CSV Data Upload Tool
 
-Your I-FPM system has comprehensive API endpoints for inputting all types of vessel performance data. Here are the complete methods:
+The I-FPM system includes a comprehensive data upload tool that allows you to import historical vessel performance data from Excel spreadsheets (.xlsx, .xls) or CSV files.
 
-### 1. Adding New Vessels
+## Supported Data Types
 
-**Endpoint:** `POST /api/ships`
+### 1. Ships Data
+Import vessel information including:
+- Vessel Name
+- IMO Number
+- Ship Type
+- Deadweight (MT)
+- Engine Power (kW)
+- Length, Beam, Draught (m)
 
-**Example data:**
-```json
-{
-  "name": "MV Your Vessel Name",
-  "imo": "IMO1234567",
-  "type": "Container Ship",
-  "deadweight": "85000",
-  "enginePower": "22000"
-}
-```
-
-**Ship Types:** Container Ship, Bulk Carrier, Tanker, General Cargo, Research Vessel
-
-### 2. Creating New Voyages
-
-**Endpoint:** `POST /api/voyages`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "voyageNumber": "VOY-2025-001",
-  "origin": "Singapore",
-  "destination": "Hamburg",
-  "departureDate": "2025-07-12T08:00:00.000Z",
-  "arrivalDate": null,
-  "status": "active"
-}
-```
+### 2. Voyages Data
+Import voyage information:
+- Ship ID
+- Voyage Number
+- Departure/Arrival Ports
+- Start/End Dates
 
 ### 3. Fuel Performance Data
+Import operational fuel data:
+- SFOC (g/kWh)
+- Fuel Consumption Rate (MT/day)
+- Engine Load Factor (%)
+- Speed Through Water (knots)
+- Speed Over Ground (knots)
+- Engine Power (kW)
+- CO2 Emissions (MT/day)
 
-**Endpoint:** `POST /api/fuel-data`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "voyageId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "sfoc": "185.5",
-  "fuelConsumptionRate": "25.8",
-  "engineLoadFactor": "78.5",
-  "speedThroughWater": "15.2",
-  "speedOverGround": "14.8",
-  "enginePower": "15700",
-  "fuelType": "HFO",
-  "co2Emissions": "80.4"
-}
-```
-
-**Key Metrics Explained:**
-- **SFOC**: Specific Fuel Oil Consumption (g/kWh)
-- **Fuel Consumption Rate**: Metric tons per day
-- **Engine Load Factor**: Percentage (0-100%)
-- **Speeds**: In knots
-- **Engine Power**: In kW
-- **CO2 Emissions**: Tons per day
-
-### 4. Environmental Conditions
-
-**Endpoint:** `POST /api/environmental-data`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "voyageId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "windSpeed": "12.5",
-  "waveHeight": "2.1",
-  "windDirection": 245,
-  "seaState": 3,
-  "weatherImpact": "3.2"
-}
-```
+### 4. Environmental Data
+Import weather conditions:
+- Wind Speed (knots)
+- Wave Height (m)
+- Wind Direction (degrees)
+- Sea State (0-9)
+- Weather Impact (%)
 
 ### 5. Hull Condition Data
+Import hull performance metrics:
+- Hull Roughness Index
+- Propeller Slip (%)
+- Hull Efficiency (%)
+- Days Since Last Cleaning
+- Last Cleaning Date
 
-**Endpoint:** `POST /api/hull-condition`
+## How to Use the Upload Tool
 
-**Example data:**
+### Step 1: Access the Tool
+1. Go to Dashboard
+2. Click "Data Input & Tools" button
+3. Select "Bulk Upload" tab
+
+### Step 2: Prepare Your Data
+1. Download sample templates from the "Templates" tab
+2. Match your column headers to the expected format
+3. Ensure data types are correct (numbers, dates, text)
+
+### Step 3: Upload and Process
+1. Select your Excel or CSV file
+2. Choose the appropriate data type
+3. Review column mapping (or customize if needed)
+4. Click "Upload and Process Data"
+
+## Column Mapping
+
+### Automatic Mapping
+The system automatically maps common column names to database fields:
+- "Vessel Name" → name
+- "IMO Number" → imo
+- "SFOC (g/kWh)" → sfoc
+- "Date" → timestamp
+
+### Custom Mapping
+For non-standard column names, you can provide custom JSON mapping:
+
 ```json
 {
-  "shipId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "roughnessIndex": "125.8",
-  "propellerSlip": "14.2",
-  "hullEfficiency": "-2.8",
-  "daysSinceLastCleaning": 85,
-  "lastCleaningDate": "2025-04-15T00:00:00.000Z"
-}
-```
-
-### 6. Vessel Trim Data
-
-**Endpoint:** `POST /api/trim-data`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "voyageId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "currentTrim": "1.8",
-  "optimalTrim": "1.5",
-  "fuelSavingsPotential": "2.3",
-  "trimAdjustment": "-0.3"
-}
-```
-
-### 7. Compliance Data
-
-**Endpoint:** `POST /api/compliance-data`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "voyageId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "ciiRating": "C",
-  "ciiValue": "8.45",
-  "eeoiValue": "12.8",
-  "eeoiTarget": "11.5",
-  "complianceStatus": "Warning"
-}
-```
-
-### 8. Auxiliary Systems Data
-
-**Endpoint:** `POST /api/auxiliary-data`
-
-**Example data:**
-```json
-{
-  "shipId": 1,
-  "timestamp": "2025-07-12T14:00:00.000Z",
-  "hvacPower": "95.5",
-  "pumpsPower": "125.8",
-  "lightingPower": "35.2",
-  "navigationPower": "45.0",
-  "cargoHandlingPower": "85.3",
-  "totalAuxiliaryPower": "386.8"
-}
-```
-
-## How to Use These Endpoints
-
-### Option 1: Using Browser Developer Tools
-1. Open your browser's Developer Tools (F12)
-2. Go to the Console tab
-3. Use fetch API to send data:
-
-```javascript
-fetch('/api/ships', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
+  "dataType": "fuel",
+  "columnMappings": {
+    "Your Column Name": "database_field",
+    "Fuel Consumption": "fuelConsumptionRate",
+    "Ship Speed": "speedThroughWater"
   },
-  body: JSON.stringify({
-    name: "MV Test Ship",
-    imo: "IMO9876543",
-    type: "Bulk Carrier",
-    deadweight: "95000",
-    enginePower: "18500"
-  })
-}).then(response => response.json()).then(data => console.log(data));
+  "skipRows": 1
+}
 ```
-
-### Option 2: Using Tools like Postman or curl
-```bash
-curl -X POST http://your-app-url/api/ships \
-  -H "Content-Type: application/json" \
-  -d '{"name":"MV Test Ship","imo":"IMO9876543","type":"Bulk Carrier","deadweight":"95000","enginePower":"18500"}'
-```
-
-### Option 3: Integration with Existing Systems
-The API endpoints accept standard JSON and can be integrated with:
-- Ship management systems
-- Engine monitoring equipment
-- Weather data feeds
-- IoT sensors
-- Manual data entry forms
-
-## Data Requirements
-
-**Required Fields:**
-- Ship: name, imo, type
-- Voyage: shipId, voyageNumber, origin, destination, departureDate, status
-- Fuel Data: shipId, timestamp, fuelType
-- All timestamps should be in ISO 8601 format
-
-**Optional Fields:**
-- Most numeric performance metrics are optional
-- Voyage: arrivalDate, voyageId (for other data types)
 
 ## Data Validation
 
-The system automatically validates:
-- Data types and formats
-- Required field presence
-- Numeric ranges for performance metrics
-- Valid ship and voyage references
+The system validates uploaded data to ensure:
+- Required fields are present
+- Data types are correct
+- Date formats are valid
+- Numeric values are within reasonable ranges
 
-## Integration Examples
+## Error Handling
 
-### Real-time Data Streaming
-For continuous monitoring, send data every 15-30 minutes:
-- Fuel performance data
-- Environmental conditions
-- Engine parameters
+If upload fails:
+1. Check the error messages in the results panel
+2. Verify column names match expected format
+3. Ensure data types are correct
+4. Check for missing required fields
+5. Download and use sample templates
 
-### Daily Reporting
-Submit once per day:
-- Hull condition assessments
-- Compliance calculations
-- Auxiliary system summaries
+## File Limits
 
-### Voyage-based Reporting
-Submit at voyage milestones:
-- Departure data
-- Mid-voyage performance
-- Arrival statistics
+- Maximum file size: 10 MB
+- Supported formats: .xlsx, .xls, .csv
+- No limit on number of records
 
-Your I-FPM system is now ready to receive real operational data from your vessels!
+## Sample Data Templates
+
+Download pre-formatted templates with correct column headers:
+- Ships Template
+- Voyages Template  
+- Fuel Performance Template
+- Environmental Data Template
+- Hull Condition Template
+
+## Tips for Success
+
+1. **Use Templates**: Start with provided templates for best results
+2. **Check Data Types**: Ensure numbers are formatted as numbers, not text
+3. **Date Formats**: Use ISO format (YYYY-MM-DD) or Excel date format
+4. **Required Fields**: Ships need name and IMO, fuel data needs ship ID and SFOC
+5. **Batch Processing**: Large files are processed in batches for better performance
+
+## Integration with Real-time Data
+
+Uploaded historical data integrates seamlessly with:
+- Real-time IoT sensor feeds
+- Live performance monitoring
+- Trend analysis and forecasting
+- Hull performance calculations
+- Environmental impact assessments
+
+The uploaded data becomes part of your vessel's performance history and is used for baseline comparisons and predictive analytics.

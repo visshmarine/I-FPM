@@ -314,6 +314,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // File upload configuration
+  const multer = (await import('multer')).default;
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    fileFilter: (req: any, file: any, cb: any) => {
+      const allowedTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+        'application/vnd.ms-excel', // .xls
+        'text/csv', // .csv
+        'application/csv'
+      ];
+      
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only Excel (.xlsx, .xls) and CSV files are allowed.'), false);
+      }
+    }
+  });
+
+  // Data upload endpoint
+  app.post("/api/upload-data", upload.single('dataFile'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const { dataParser } = await import("./data-parser");
+      const mappingConfig = req.body.mappingConfig ? JSON.parse(req.body.mappingConfig) : null;
+      
+      if (!mappingConfig) {
+        return res.status(400).json({ error: "Mapping configuration is required" });
+      }
+
+      let result;
+      const fileExtension = req.file.originalname.split('.').pop()?.toLowerCase();
+      
+      if (fileExtension === 'csv') {
+        result = await dataParser.parseCSVFile(req.file.buffer, mappingConfig);
+      } else if (['xlsx', 'xls'].includes(fileExtension || '')) {
+        result = await dataParser.parseExcelFile(req.file.buffer, Array.isArray(mappingConfig) ? mappingConfig : [mappingConfig]);
+      } else {
+        return res.status(400).json({ error: "Unsupported file format" });
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error('File upload error:', error);
+      res.status(500).json({ 
+        error: "File processing failed", 
+        details: error.message 
+      });
+    }
+  });
+
+  // Get sample mapping configurations
+  app.get("/api/upload-data/sample-mappings", (req, res) => {
+    try {
+      const { DataParser } = require("./data-parser");
+      const sampleMappings = DataParser.getSampleMappings();
+      res.json(sampleMappings);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get sample mappings" });
+    }
+  });
+
   // Add trim data
   app.post("/api/trim-data", async (req, res) => {
     try {
