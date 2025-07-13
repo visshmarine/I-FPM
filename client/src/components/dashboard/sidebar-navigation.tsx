@@ -13,8 +13,11 @@ import {
   Gauge,
   Wind,
   Zap,
-  Settings
+  Settings,
+  Database,
+  HardDrive
 } from "lucide-react";
+import VisshLogo from "@/components/ui/vissh-logo";
 
 interface SidebarNavigationProps {
   activeSection: string;
@@ -63,7 +66,7 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
     {
       id: 'hull',
       name: 'HULL PERFORMANCE',
-      icon: Ship,
+      icon: VisshLogo,
       color: 'bg-blue-500',
       metrics: [
         { label: 'Hull Roughness', value: '125.8 index', status: 'warning' },
@@ -71,7 +74,7 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
         { label: 'Fouling Rate', value: '2.1%/month', status: 'critical' }
       ],
       subsections: [
-        { id: 'hull-condition', name: 'Hull Condition', icon: Ship },
+        { id: 'hull-condition', name: 'Hull Condition', icon: VisshLogo },
         { id: 'hull-resistance', name: 'Resistance Analysis', icon: Gauge },
         { id: 'hull-calculator', name: 'Hull Calculator', icon: Settings },
         { id: 'hull-analytics', name: 'Advanced Analytics', icon: BarChart3 }
@@ -109,6 +112,23 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
         { id: 'environmental-data', name: 'Environmental Data', icon: Wind },
         { id: 'compliance', name: 'Compliance Tracking', icon: BarChart3 },
         { id: 'real-time-monitoring', name: 'Real-time Monitoring', icon: Gauge }
+      ]
+    },
+    {
+      id: 'database',
+      name: 'DATABASE ADMIN',
+      icon: Database,
+      color: 'bg-indigo-500',
+      metrics: [
+        { label: 'Records', value: '315 total', status: 'good' },
+        { label: 'Data Quality', value: '98.7%', status: 'good' },
+        { label: 'Storage', value: 'Optimal', status: 'good' }
+      ],
+      subsections: [
+        { id: 'admin', name: 'Database Overview', icon: Database },
+        { id: 'backup', name: 'Backup & Export', icon: HardDrive },
+        { id: 'optimize', name: 'Performance', icon: Settings },
+        { id: 'integrity', name: 'Data Integrity', icon: BarChart3 }
       ]
     }
   ];
@@ -159,7 +179,11 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-lg ${section.color} text-white`}>
-                          <Icon className="h-4 w-4" />
+                          {Icon === VisshLogo ? (
+                            <VisshLogo size="sm" className="brightness-0 invert" />
+                          ) : (
+                            <Icon className="h-4 w-4" />
+                          )}
                         </div>
                         <div className="text-left">
                           <div className="font-medium text-sm">{section.name}</div>
@@ -208,7 +232,11 @@ export default function SidebarNavigation({ activeSection, onSectionChange, data
                               onClick={() => handleSubsectionClick(section.id, subsection.id)}
                               className={`w-full justify-start text-xs h-8 ${isSubActive ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
                             >
-                              <SubIcon className="h-3 w-3 mr-2" />
+                              {SubIcon === VisshLogo ? (
+                                <VisshLogo size="sm" className="mr-2" />
+                              ) : (
+                                <SubIcon className="h-3 w-3 mr-2" />
+                              )}
                               {subsection.name}
                             </Button>
                           );

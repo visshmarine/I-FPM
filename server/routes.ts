@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { generateRealisticData } from "../client/src/lib/data-generator";
 import { mlPredictor } from "./ml-predictor";
 import { weatherService } from "./weather-service";
+import { databaseManager } from './database-manager';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Generate realistic data on server startup
@@ -512,6 +513,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Data sources error:", error);
       res.status(500).json({ error: "Failed to fetch data sources" });
+    }
+  });
+
+  // Database Management Endpoints
+  app.get("/api/database/stats", async (req, res) => {
+    try {
+      const stats = await databaseManager.getDatabaseStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Database stats error:", error);
+      res.status(500).json({ error: "Failed to fetch database statistics" });
+    }
+  });
+
+  app.get("/api/database/integrity", async (req, res) => {
+    try {
+      const report = await databaseManager.getDataIntegrityReport();
+      res.json(report);
+    } catch (error) {
+      console.error("Data integrity error:", error);
+      res.status(500).json({ error: "Failed to generate integrity report" });
+    }
+  });
+
+  app.get("/api/database/backup", async (req, res) => {
+    try {
+      const backup = await databaseManager.exportDatabaseBackup();
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="ifpm_backup_${new Date().toISOString().split('T')[0]}.json"`);
+      res.json(backup);
+    } catch (error) {
+      console.error("Database backup error:", error);
+      res.status(500).json({ error: "Failed to create database backup" });
+    }
+  });
+
+  app.post("/api/database/cleanup", async (req, res) => {
+    try {
+      const { retentionMonths } = req.body;
+      const result = await databaseManager.cleanupOldData(retentionMonths || 24);
+      res.json(result);
+    } catch (error) {
+      console.error("Database cleanup error:", error);
+      res.status(500).json({ error: "Failed to cleanup database" });
+    }
+  });
+
+  app.post("/api/database/optimize", async (req, res) => {
+    try {
+      const result = await databaseManager.optimizeDatabase();
+      res.json(result);
+    } catch (error) {
+      console.error("Database optimization error:", error);
+      res.status(500).json({ error: "Failed to optimize database" });
     }
   });
 

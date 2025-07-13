@@ -56,7 +56,9 @@ Preferred communication style: Simple, everyday language.
 - **CII Calculator**: Complete Carbon Intensity Indicator calculation with IMO formula implementation
 - **Data Input System**: Comprehensive 5-tab data entry interface with validation
 - **Export Functionality**: PDF reports and CSV data exports with real vessel data
-- **Sidebar Navigation**: Organized analysis groups (FUEL, HULL, ENGINE, ENVIRONMENT) with contextual content
+- **Sidebar Navigation**: Organized analysis groups (FUEL, HULL, ENGINE, ENVIRONMENT, DATABASE) with contextual content
+- **PostgreSQL Integration**: Full database storage with 315+ historical records across 8 tables
+- **Database Administration**: Complete backup, optimization, integrity checking, and cleanup tools
 
 ## Data Flow
 

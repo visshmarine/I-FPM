@@ -15,6 +15,7 @@ import RealTimeMonitoring from "@/components/dashboard/real-time-monitoring";
 import AdvancedMetrics from "@/components/dashboard/advanced-metrics";
 import HullCalculator from "@/components/dashboard/hull-calculator";
 import CIICalculator from "@/components/dashboard/cii-calculator";
+import DatabaseAdmin from "@/components/dashboard/database-admin";
 
 interface AnalysisContentProps {
   activeSection: string;
@@ -356,6 +357,15 @@ export default function AnalysisContent({ activeSection, data, fuelHistory }: An
                 </div>
               </div>
             </div>
+          </div>
+        );
+
+      // DATABASE ADMINISTRATION
+      case 'database':
+      case 'database-admin':
+        return (
+          <div className="grid grid-cols-1 gap-6">
+            <DatabaseAdmin />
           </div>
         );
 

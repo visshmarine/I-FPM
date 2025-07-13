@@ -26,6 +26,7 @@ import RealTimeMonitoring from "@/components/dashboard/real-time-monitoring";
 import AdvancedHullAnalytics from "@/components/dashboard/advanced-hull-analytics";
 import SidebarNavigation from "@/components/dashboard/sidebar-navigation";
 import AnalysisContent from "@/components/dashboard/analysis-content";
+import VisshLogo from "@/components/ui/vissh-logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

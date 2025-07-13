@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Ship, Clock, Settings, Signal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import VisshLogo from "@/components/ui/vissh-logo";
 
 export default function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -18,7 +19,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Ship className="h-8 w-8 mr-3" />
+            <VisshLogo size="lg" className="mr-3 brightness-0 invert" />
             <h1 className="text-xl font-bold">I-FPM</h1>
             <span className="ml-2 text-sm opacity-80">Intelligent Fuel Performance Monitoring</span>
           </div>
